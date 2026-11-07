@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#100b2e">
+  <title>शुभ दीपावली — रोशनी और खुशियों का त्योहार</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #fff8e8;
+      --muted: #d6c9e8;
+      --gold: #ffd782;
+      --orange: #ff9a4a;
+      --pink: #ff8ab8;
+      --violet: #a48bff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { overflow-x: clip; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: clip;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 50% 87%, rgba(119, 43, 105, .35), transparent 43%),
+        radial-gradient(ellipse at 12% 24%, rgba(85, 49, 143, .25), transparent 35%),
+        linear-gradient(145deg, #100b2e 0%, #17103c 48%, #25103d 100%);
+      font-family: "Nirmala UI", "Kohinoor Devanagari", "Mangal", system-ui, sans-serif;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      content: "";
+      opacity: .16;
+      background-image: radial-gradient(rgba(255,255,255,.65) .7px, transparent .7px);
+      background-size: 46px 46px;
+      mask-image: linear-gradient(to bottom, black, transparent 82%);
+    }
+
+    .sky, .page { position: relative; }
+
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    #fireworks { width: 100%; height: 100%; }
+
+    .light-orb {
+      position: absolute;
+      bottom: -34px;
+      left: var(--x);
+      width: var(--size);
+      height: var(--size);
+      border: 1px solid rgba(255, 227, 173, .58);
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(255, 242, 194, .8), rgba(255, 170, 94, .2) 45%, transparent 72%);
+      box-shadow: 0 0 14px rgba(255, 188, 107, .3);
+      opacity: 0;
+      animation: float-light var(--duration) linear infinite;
+      animation-delay: var(--delay);
+      will-change: transform, opacity;
+    }
+
+    .light-orb:nth-of-type(3n) { border-radius: 35% 65% 58% 42%; }
+    .light-orb:nth-of-type(3n + 1) { width: calc(var(--size) * .68); height: calc(var(--size) * .68); }
+
+    .twinkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #ffe3a3;
+      box-shadow: 0 0 12px 3px rgba(255, 205, 124, .42);
+      animation: star-twinkle 3s ease-in-out infinite;
+      will-change: opacity, transform;
+    }
+
+    .twinkle-one { top: 18%; left: 13%; }
+    .twinkle-two { top: 29%; left: 84%; width: 3px; height: 3px; animation-delay: .8s; }
+    .twinkle-three { top: 65%; left: 9%; width: 3px; height: 3px; animation-delay: 1.6s; }
+    .twinkle-four { top: 72%; left: 91%; animation-delay: 2.2s; }
+    .twinkle-five { top: 12%; left: 68%; width: 2px; height: 2px; animation-delay: 1.2s; }
+    .twinkle-six { top: 48%; left: 94%; width: 3px; height: 3px; animation-delay: .4s; }
+
+    .page {
+      z-index: 1;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      padding: 26px 24px 30px;
+    }
+
+    .topbar {
+      display: flex;
+      width: min(100%, 1120px);
+      align-items: center;
+      justify-content: space-between;
+      color: #f5e9ff;
+      font-size: .88rem;
+      letter-spacing: .04em;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border: 1px solid rgba(255, 215, 130, .4);
+      border-radius: 50%;
+      color: var(--gold);
+      background: rgba(255, 215, 130, .08);
+      box-shadow: 0 0 24px rgba(255, 179, 70, .12);
+      font-size: 1.15rem;
+      animation: brand-glow 3.5s ease-in-out infinite;
+    }
+
+    .top-note { color: #c9b9df; }
+
+    main {
+      display: flex;
+      width: min(100%, 1120px);
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 0 56px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 20px;
+      color: var(--gold);
+      font-size: .83rem;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      animation: rise-in .8s both;
+    }
+
+    .eyebrow::before, .eyebrow::after {
+      width: 24px;
+      height: 1px;
+      content: "";
+      background: linear-gradient(90deg, transparent, var(--gold));
+    }
+
+    .eyebrow::after { transform: rotate(180deg); }
+
+    h1 {
+      margin: 0;
+      color: #fff3d4;
+      font-size: clamp(3.2rem, 9.5vw, 7.4rem);
+      font-weight: 800;
+      letter-spacing: .015em;
+      line-height: 1.15;
+      text-shadow: 0 3px 0 rgba(92, 37, 87, .8), 0 0 48px rgba(255, 173, 79, .2);
+      animation: rise-in .8s .08s both;
+    }
+
+    .title-accent {
+      display: block;
+      margin-top: 8px;
+      background: linear-gradient(110deg, #ffdb8d 15%, #ff9f70 38%, #fff1c8 50%, #f5a1d0 68%, #ffdb8d 85%);
+      background-size: 220% 100%;
+      background-clip: text;
+      animation: title-shimmer 7s ease-in-out infinite;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .intro {
+      max-width: 590px;
+      margin: 23px auto 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.4vw, 1.22rem);
+      line-height: 1.9;
+      animation: rise-in .8s .18s both;
+    }
+
+    .wish-card {
+      position: relative;
+      width: min(100%, 700px);
+      margin-top: 31px;
+      padding: 23px 34px 22px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 220, 159, .2);
+      border-radius: 20px;
+      background: linear-gradient(115deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+      box-shadow: 0 18px 70px rgba(5, 3, 25, .24), inset 0 1px rgba(255,255,255,.08);
+      backdrop-filter: blur(12px);
+      animation: rise-in .8s .28s both;
+    }
+
+    .wish-card::after {
+      position: absolute;
+      top: -50%;
+      left: -65%;
+      width: 35%;
+      height: 200%;
+      background: linear-gradient(90deg, transparent, rgba(255, 231, 183, .09), transparent);
+      content: "";
+      pointer-events: none;
+      transform: rotate(20deg);
+      animation: card-shimmer 9s ease-in-out infinite;
+    }
+
+    .wish-card::before {
+      position: absolute;
+      top: -50px;
+      left: 50%;
+      width: 150px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(255, 177, 82, .13);
+      content: "";
+      filter: blur(34px);
+      transform: translateX(-50%);
+    }
+
+    .wish-card p {
+      position: relative;
+      margin: 0;
+      color: #fff5e3;
+      font-size: clamp(1rem, 2.3vw, 1.17rem);
+      line-height: 1.9;
+    }
+
+    .wish-card strong { color: var(--gold); font-weight: 700; }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 13px;
+      margin-top: 28px;
+      animation: rise-in .8s .36s both;
+    }
+
+    button {
+      display: inline-flex;
+      min-height: 50px;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 23px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      color: #29143b;
+      background: linear-gradient(105deg, #ffe09a, #ffb66c);
+      box-shadow: 0 8px 26px rgba(255, 166, 87, .24);
+      cursor: pointer;
+      font: inherit;
+      font-size: .96rem;
+      font-weight: 750;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    button:hover {
+      box-shadow: 0 11px 34px rgba(255, 166, 87, .38);
+      transform: translateY(-3px);
+    }
+
+    button:active { transform: translateY(0) scale(.98); }
+
+    button:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 4px;
+    }
+
+    .button-secondary {
+      border-color: rgba(255, 231, 200, .3);
+      color: #fff3e7;
+      background: rgba(255, 255, 255, .055);
+      box-shadow: none;
+    }
+
+    .button-secondary:hover {
+      border-color: rgba(255, 231, 200, .65);
+      background: rgba(255, 255, 255, .11);
+      box-shadow: 0 8px 24px rgba(9, 4, 33, .2);
+    }
+
+    .diyas {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: clamp(30px, 8vw, 92px);
+      height: 132px;
+      margin-top: 37px;
+      animation: rise-in .9s .42s both;
+    }
+
+    .diya-wrap {
+      position: relative;
+      display: flex;
+      width: 72px;
+      height: 112px;
+      align-items: flex-end;
+      justify-content: center;
+      animation: diya-float 3s ease-in-out infinite;
+      will-change: translate;
+    }
+
+    .diya-wrap:nth-child(2) { animation-delay: .6s; transform: scale(1.22); }
+    .diya-wrap:nth-child(3) { animation-delay: 1.1s; }
+
+    .flame {
+      position: absolute;
+      bottom: 42px;
+      left: 50%;
+      width: 22px;
+      height: 37px;
+      border-radius: 70% 30% 55% 45% / 65% 45% 55% 35%;
+      background: linear-gradient(165deg, #fff4bf 0%, #ffcf69 42%, #ff7b37 100%);
+      box-shadow: 0 0 14px 5px rgba(255, 174, 76, .52), 0 0 38px 13px rgba(255, 127, 67, .22);
+      transform: translateX(-50%) rotate(1deg);
+      transform-origin: 50% 100%;
+      animation: flicker 1.3s ease-in-out infinite alternate;
+    }
+
+    .diya-wrap:nth-child(2) .flame { animation-delay: .36s; }
+    .diya-wrap:nth-child(3) .flame { animation-delay: .76s; }
+
+    .wick {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      z-index: 1;
+      width: 3px;
+      height: 11px;
+      border-radius: 4px;
+      background: #4a2835;
+      transform: translateX(-50%);
+    }
+
+    .bowl {
+      position: relative;
+      width: 72px;
+      height: 34px;
+      border: 1px solid rgba(255, 224, 147, .65);
+      border-radius: 0 0 42px 42px;
+      background: linear-gradient(180deg, #ed9250, #9d3e51 68%, #682b56);
+      box-shadow: inset 0 5px 7px rgba(255, 223, 153, .38), 0 6px 21px rgba(255, 120, 71, .18);
+      clip-path: polygon(0 0, 100% 0, 87% 68%, 69% 93%, 50% 100%, 31% 93%, 13% 68%);
+    }
+
+    .bowl::after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 7px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, #ffc778, #fff0ba, #e99462);
+      content: "";
+    }
+
+    .rangoli {
+      position: absolute;
+      right: max(4%, calc((100vw - 1200px) / 2));
+      bottom: 42px;
+      width: 100px;
+      aspect-ratio: 1;
+      border: 1px solid rgba(255, 206, 132, .38);
+      border-radius: 50%;
+      opacity: .7;
+      background:
+        radial-gradient(circle, transparent 0 15%, rgba(255,206,132,.65) 16% 17%, transparent 18% 33%, rgba(255,206,132,.45) 34% 35%, transparent 36%),
+        repeating-conic-gradient(from 0deg, rgba(251,177,128,.75) 0deg 2deg, transparent 2deg 30deg);
+      box-shadow: 0 0 30px rgba(255, 173, 89, .14);
+      animation: rotate-slow 40s linear infinite;
+    }
+
+    .rangoli::before {
+      position: absolute;
+      inset: 12px;
+      border: 1px dashed rgba(255, 221, 157, .6);
+      border-radius: 50%;
+      content: "";
+    }
+
+    footer {
+      width: min(100%, 1120px);
+      color: #a99abb;
+      font-size: .79rem;
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 5;
+      max-width: calc(100vw - 40px);
+      padding: 12px 18px;
+      border: 1px solid rgba(255, 220, 159, .27);
+      border-radius: 12px;
+      color: #fff4df;
+      background: rgba(33, 18, 59, .94);
+      box-shadow: 0 8px 30px rgba(0,0,0,.25);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+
+    .toast.visible { opacity: 1; transform: translateY(0); }
+
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes diya-float {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 0 -7px; }
+    }
+
+    @keyframes flicker {
+      from { transform: translateX(-50%) rotate(-4deg) scale(.94, 1); }
+      to { transform: translateX(-50%) rotate(4deg) scale(1.05, .96); }
+    }
+
+    @keyframes rotate-slow { to { rotate: 360deg; } }
+
+    @keyframes float-light {
+      0% { opacity: 0; transform: translate3d(0, 0, 0) scale(.75) rotate(0deg); }
+      12% { opacity: .48; }
+      75% { opacity: .32; }
+      100% { opacity: 0; transform: translate3d(34px, -112vh, 0) scale(1.1) rotate(160deg); }
+    }
+
+    @keyframes title-shimmer {
+      0%, 60%, 100% { background-position: 100% 50%; }
+      80% { background-position: 0 50%; }
+    }
+
+    @keyframes card-shimmer {
+      0%, 67%, 100% { left: -65%; }
+      85% { left: 140%; }
+    }
+
+    @keyframes brand-glow {
+      0%, 100% { box-shadow: 0 0 18px rgba(255, 179, 70, .1); }
+      50% { box-shadow: 0 0 28px rgba(255, 179, 70, .35); }
+    }
+
+    @keyframes star-twinkle {
+      0%, 100% { opacity: .25; transform: scale(.7); }
+      50% { opacity: .95; transform: scale(1.35); }
+    }
+
+    @media (max-width: 600px) {
+      .page { padding: 19px 18px 22px; }
+      .topbar { font-size: .79rem; }
+      .top-note { max-width: 120px; text-align: right; }
+      main { padding: 43px 0 42px; }
+      .eyebrow { margin-bottom: 15px; font-size: .72rem; }
+      .eyebrow::before, .eyebrow::after { width: 17px; }
+      .intro { margin-top: 18px; line-height: 1.8; }
+      .wish-card { margin-top: 24px; padding: 18px 19px; border-radius: 16px; }
+      .actions { width: 100%; gap: 10px; margin-top: 22px; }
+      button { min-height: 47px; padding: 0 17px; font-size: .88rem; }
+      .diyas { height: 114px; margin-top: 29px; }
+      .diya-wrap { transform: scale(.85); }
+      .diya-wrap:nth-child(2) { transform: scale(1.04); }
+      .rangoli { right: 12px; bottom: 35px; width: 72px; opacity: .35; }
+      footer { font-size: .73rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true">
+    <canvas id="fireworks"></canvas>
+    <span class="twinkle twinkle-one"></span>
+    <span class="twinkle twinkle-two"></span>
+    <span class="twinkle twinkle-three"></span>
+    <span class="twinkle twinkle-four"></span>
+    <span class="twinkle twinkle-five"></span>
+    <span class="twinkle twinkle-six"></span>
+    <span class="light-orb" style="--x: 8%; --size: 12px; --duration: 13s; --delay: -8s"></span>
+    <span class="light-orb" style="--x: 22%; --size: 8px; --duration: 17s; --delay: -3s"></span>
+    <span class="light-orb" style="--x: 39%; --size: 14px; --duration: 15s; --delay: -11s"></span>
+    <span class="light-orb" style="--x: 57%; --size: 9px; --duration: 19s; --delay: -6s"></span>
+    <span class="light-orb" style="--x: 74%; --size: 13px; --duration: 16s; --delay: -13s"></span>
+    <span class="light-orb" style="--x: 91%; --size: 10px; --duration: 14s; --delay: -4s"></span>
+  </div>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span>दीपोत्सव</span></div>
+      <span class="top-note">खुशियों की रोशनी बाँटें</span>
+    </header>
+
+    <main>
+      <p class="eyebrow">रोशनी · प्रेम · नई शुरुआत</p>
+      <h1>शुभ <span class="title-accent">दीपावली</span></h1>
+      <p class="intro">दीपों की जगमगाहट आपके जीवन में सुख, समृद्धि और नई उम्मीदें लेकर आए।</p>
+
+      <section class="wish-card" aria-label="दीपावली की शुभकामना">
+        <p>आपके घर-आँगन में खुशियों के दीप जलें और हर दिन <strong>प्रेम, सफलता और मुस्कान</strong> से रोशन हो।<br>आपको और आपके परिवार को दीपावली की हार्दिक शुभकामनाएँ!<br><strong>— Rajneesh Ruhaal की ओर से</strong></p>
+      </section>
+
+      <div class="actions">
+        <button id="celebrate" type="button"><span aria-hidden="true">✦</span> रोशनी फैलाएँ</button>
+        <button id="fireworks-button" class="button-secondary" type="button"><span aria-hidden="true">🎆</span> फुलझड़ी और पटाखे</button>
+      </div>
+
+      <div class="diyas" aria-label="जलते हुए दीये">
+        <div class="diya-wrap" aria-hidden="true"><span class="flame"></span><span class="wick"></span><span class="bowl"></span></div>
+        <div class="diya-wrap" aria-hidden="true"><span class="flame"></span><span class="wick"></span><span class="bowl"></span></div>
+        <div class="diya-wrap" aria-hidden="true"><span class="flame"></span><span class="wick"></span><span class="bowl"></span></div>
+      </div>
+      <div class="rangoli" aria-hidden="true"></div>
+    </main>
+
+    <footer>इस दीपावली, खुशियाँ बाँटें और हर दिल में उम्मीद का एक दीप जलाएँ ✨</footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById("fireworks");
+      const context = canvas.getContext("2d");
+      const colors = ["255, 213, 122", "255, 139, 111", "255, 153, 205", "174, 151, 255", "255, 244, 209"];
+      const maxParticles = 450;
+      let width = 0;
+      let height = 0;
+      let particles = [];
+      let animationFrame = 0;
+      let burstTimers = [];
+      let audioContext;
+
+      function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        const ratio = Math.min(window.devicePixelRatio || 1, width < 600 ? 1.5 : 2);
+        canvas.width = Math.round(width * ratio);
+        canvas.height = Math.round(height * ratio);
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      }
+
+      function addParticle(particle) {
+        if (particles.length === maxParticles) particles.shift();
+        particles.push(particle);
+        if (!animationFrame && !document.hidden) {
+          animationFrame = requestAnimationFrame(animate);
+        }
+      }
+
+      function burst(x, y, amount = 54) {
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        for (let i = 0; i < amount; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 1.1 + Math.random() * 3.2;
+          addParticle({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 45 + Math.random() * 35,
+            maxLife: 80,
+            size: 1.2 + Math.random() * 2.1,
+            color
+          });
+        }
+      }
+
+      function sparkler(x, y) {
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        for (let i = 0; i < 85; i++) {
+          const angle = -Math.PI / 2 + (Math.random() - .5) * 1.3;
+          const speed = 1.5 + Math.random() * 5;
+          addParticle({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 32 + Math.random() * 42,
+            maxLife: 74,
+            size: 1 + Math.random() * 2.4,
+            color
+          });
+        }
+      }
+
+      function scheduleBurst(delay) {
+        const timer = window.setTimeout(() => {
+          burst(width * (.2 + Math.random() * .6), height * (.18 + Math.random() * .35), 65);
+          burstTimers = burstTimers.filter(activeTimer => activeTimer !== timer);
+        }, delay);
+        burstTimers.push(timer);
+      }
+
+      function playFireworkSound() {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) throw new Error("Audio playback is not supported");
+        audioContext ??= new AudioContextClass();
+        const sound = audioContext;
+        const play = () => {
+          const duration = .42;
+          const buffer = sound.createBuffer(1, Math.floor(sound.sampleRate * duration), sound.sampleRate);
+          const samples = buffer.getChannelData(0);
+          for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+
+          const noise = sound.createBufferSource();
+          const filter = sound.createBiquadFilter();
+          const noiseGain = sound.createGain();
+          const now = sound.currentTime;
+          noise.buffer = buffer;
+          filter.type = "bandpass";
+          filter.frequency.setValueAtTime(1150, now);
+          filter.frequency.exponentialRampToValueAtTime(260, now + duration);
+          noiseGain.gain.setValueAtTime(.0001, now);
+          noiseGain.gain.exponentialRampToValueAtTime(.2, now + .012);
+          noiseGain.gain.exponentialRampToValueAtTime(.0001, now + duration);
+          noise.connect(filter).connect(noiseGain).connect(sound.destination);
+          noise.start(now);
+          noise.stop(now + duration);
+
+          const boom = sound.createOscillator();
+          const boomGain = sound.createGain();
+          boom.type = "triangle";
+          boom.frequency.setValueAtTime(105, now);
+          boom.frequency.exponentialRampToValueAtTime(38, now + .2);
+          boomGain.gain.setValueAtTime(.0001, now);
+          boomGain.gain.exponentialRampToValueAtTime(.24, now + .01);
+          boomGain.gain.exponentialRampToValueAtTime(.0001, now + .24);
+          boom.connect(boomGain).connect(sound.destination);
+          boom.start(now);
+          boom.stop(now + .25);
+        };
+        if (sound.state === "suspended") {
+          sound.resume().then(play).catch(() => showToast("इस browser में पटाखों की आवाज़ शुरू नहीं हो सकी।"));
+        } else {
+          play();
+        }
+      }
+
+      function animate() {
+        animationFrame = 0;
+        context.clearRect(0, 0, width, height);
+        let remaining = 0;
+        for (const particle of particles) {
+          if (particle.life <= 0) continue;
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+          particle.vy += .025;
+          particle.vx *= .985;
+          particle.life -= 1;
+          particles[remaining++] = particle;
+          context.beginPath();
+          context.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          context.fillStyle = `rgba(${particle.color}, ${Math.max(0, particle.life / particle.maxLife)})`;
+          context.fill();
+        }
+        particles.length = remaining;
+        if (particles.length && !document.hidden) {
+          animationFrame = requestAnimationFrame(animate);
+        }
+      }
+
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          if (animationFrame) cancelAnimationFrame(animationFrame);
+          animationFrame = 0;
+          particles = [];
+          for (const timer of burstTimers) window.clearTimeout(timer);
+          burstTimers = [];
+          context.clearRect(0, 0, width, height);
+        }
+      });
+
+      const toast = document.getElementById("toast");
+      let toastTimer;
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("visible");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove("visible"), 2800);
+      }
+
+      document.getElementById("celebrate").addEventListener("click", () => {
+        burst(width * (.25 + Math.random() * .5), height * (.2 + Math.random() * .35), 90);
+        showToast("आपके जीवन में खुशियों की रोशनी बनी रहे! ✨");
+      });
+
+      document.getElementById("fireworks-button").addEventListener("click", () => {
+        const centerX = width * (.25 + Math.random() * .5);
+        const centerY = height * (.2 + Math.random() * .3);
+        sparkler(width * .32, height * .78);
+        sparkler(width * .68, height * .78);
+        burst(centerX, centerY, 75);
+        for (const timer of burstTimers) window.clearTimeout(timer);
+        burstTimers = [];
+        scheduleBurst(240);
+        scheduleBurst(520);
+        try {
+          playFireworkSound();
+        } catch (error) {
+          showToast("दृश्य आतिशबाज़ी तैयार है, लेकिन इस browser में आवाज़ उपलब्ध नहीं है।");
+        }
+        showToast("फुलझड़ी और पटाखों के साथ दीपावली का जश्न! 🎇");
+      });
+    })();
+  </script>
+</body>
+</html>
