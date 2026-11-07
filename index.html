@@ -621,48 +621,83 @@
         burstTimers.push(timer);
       }
 
-      function playFireworkSound() {
+      function playFireworkSound(repeatCount = 1) {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         if (!AudioContextClass) throw new Error("Audio playback is not supported");
         audioContext ??= new AudioContextClass();
         const sound = audioContext;
+
         const play = () => {
-          const duration = .42;
+          const duration = .6;
           const buffer = sound.createBuffer(1, Math.floor(sound.sampleRate * duration), sound.sampleRate);
           const samples = buffer.getChannelData(0);
-          for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+
+          for (let i = 0; i < samples.length; i++) {
+            const t = i / samples.length;
+            const crackle = (Math.random() * 2 - 1) * (1 - t) * 1.3;
+            const lowRumble = Math.sin(i * 0.065) * 0.18 * (1 - t);
+            samples[i] = Math.max(-1, Math.min(1, crackle + lowRumble));
+          }
 
           const noise = sound.createBufferSource();
           const filter = sound.createBiquadFilter();
+          const highpass = sound.createBiquadFilter();
           const noiseGain = sound.createGain();
           const now = sound.currentTime;
           noise.buffer = buffer;
+
           filter.type = "bandpass";
-          filter.frequency.setValueAtTime(1150, now);
-          filter.frequency.exponentialRampToValueAtTime(260, now + duration);
+          filter.frequency.setValueAtTime(2000, now);
+          filter.frequency.exponentialRampToValueAtTime(420, now + duration);
+          highpass.type = "highpass";
+          highpass.frequency.setValueAtTime(780, now);
+
           noiseGain.gain.setValueAtTime(.0001, now);
-          noiseGain.gain.exponentialRampToValueAtTime(.2, now + .012);
+          noiseGain.gain.exponentialRampToValueAtTime(1.15, now + .015);
           noiseGain.gain.exponentialRampToValueAtTime(.0001, now + duration);
-          noise.connect(filter).connect(noiseGain).connect(sound.destination);
+
+          noise.connect(filter).connect(highpass).connect(noiseGain).connect(sound.destination);
           noise.start(now);
           noise.stop(now + duration);
 
           const boom = sound.createOscillator();
           const boomGain = sound.createGain();
-          boom.type = "triangle";
-          boom.frequency.setValueAtTime(105, now);
-          boom.frequency.exponentialRampToValueAtTime(38, now + .2);
+          boom.type = "sawtooth";
+          boom.frequency.setValueAtTime(230, now);
+          boom.frequency.exponentialRampToValueAtTime(42, now + .18);
           boomGain.gain.setValueAtTime(.0001, now);
-          boomGain.gain.exponentialRampToValueAtTime(.24, now + .01);
-          boomGain.gain.exponentialRampToValueAtTime(.0001, now + .24);
+          boomGain.gain.exponentialRampToValueAtTime(.85, now + .008);
+          boomGain.gain.exponentialRampToValueAtTime(.0001, now + .18);
           boom.connect(boomGain).connect(sound.destination);
           boom.start(now);
-          boom.stop(now + .25);
+          boom.stop(now + .2);
+
+          for (let i = 0; i < 5; i++) {
+            const snap = sound.createOscillator();
+            const snapGain = sound.createGain();
+            const snapTime = now + i * 0.025 + 0.01;
+            snap.type = "triangle";
+            snap.frequency.setValueAtTime(950 + Math.random() * 1400, snapTime);
+            snap.frequency.exponentialRampToValueAtTime(120 + Math.random() * 90, snapTime + .08);
+            snapGain.gain.setValueAtTime(.0001, snapTime);
+            snapGain.gain.exponentialRampToValueAtTime(.22, snapTime + .006);
+            snapGain.gain.exponentialRampToValueAtTime(.0001, snapTime + .09);
+            snap.connect(snapGain).connect(sound.destination);
+            snap.start(snapTime);
+            snap.stop(snapTime + .09);
+          }
         };
+
+        const triggerSequential = () => {
+          for (let i = 0; i < repeatCount; i++) {
+            window.setTimeout(() => play(), i * 25);
+          }
+        };
+
         if (sound.state === "suspended") {
-          sound.resume().then(play).catch(() => showToast("इस browser में पटाखों की आवाज़ शुरू नहीं हो सकी।"));
+          sound.resume().then(triggerSequential).catch(() => showToast("इस browser में पटाखों की आवाज़ शुरू नहीं हो सकी।"));
         } else {
-          play();
+          triggerSequential();
         }
       }
 
@@ -727,7 +762,7 @@
         scheduleBurst(240);
         scheduleBurst(520);
         try {
-          playFireworkSound();
+          playFireworkSound(20);
         } catch (error) {
           showToast("दृश्य आतिशबाज़ी तैयार है, लेकिन इस browser में आवाज़ उपलब्ध नहीं है।");
         }
